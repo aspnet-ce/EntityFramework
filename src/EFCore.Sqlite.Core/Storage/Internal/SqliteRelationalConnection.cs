@@ -57,9 +57,9 @@ namespace Microsoft.EntityFrameworkCore.Storage.Internal
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public override bool Open()
+        public override bool Open(bool logErrorAsDebug = false)
         {
-            if (base.Open())
+            if (base.Open(logErrorAsDebug))
             {
                 EnableForeignKeys();
                 return true;
@@ -72,9 +72,9 @@ namespace Microsoft.EntityFrameworkCore.Storage.Internal
         ///     This API supports the Entity Framework Core infrastructure and is not intended to be used
         ///     directly from your code. This API may change or be removed in future releases.
         /// </summary>
-        public override async Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public override async Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken), bool logErrorAsDebug = false)
         {
-            if (await base.OpenAsync(cancellationToken))
+            if (await base.OpenAsync(cancellationToken, logErrorAsDebug))
             {
                 EnableForeignKeys();
                 return true;

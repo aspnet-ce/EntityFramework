@@ -116,7 +116,7 @@ namespace Microsoft.EntityFrameworkCore.Storage.Internal
                     {
                         try
                         {
-                            _connection.Open();
+                            _connection.Open(logErrorAsDebug: true);
                             _connection.Close();
                             return true;
                         }
@@ -153,7 +153,7 @@ namespace Microsoft.EntityFrameworkCore.Storage.Internal
                     {
                         try
                         {
-                            await _connection.OpenAsync(ct);
+                            await _connection.OpenAsync(ct, logErrorAsDebug: true);
 
                             _connection.Close();
                             return true;

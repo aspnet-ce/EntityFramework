@@ -267,8 +267,9 @@ namespace Microsoft.EntityFrameworkCore.Storage
         /// <summary>
         ///     Opens the connection to the database.
         /// </summary>
+        /// /// <param name="logErrorAsDebug"> Indicate if the connection error should be logged as debug message. </param>
         /// <returns> True if the underlying connection was actually opened; false otherwise. </returns>
-        public virtual bool Open()
+        public virtual bool Open(bool logErrorAsDebug = false)
         {
             CheckForAmbientTransactions();
 
@@ -308,7 +309,8 @@ namespace Microsoft.EntityFrameworkCore.Storage
                         e,
                         startTime,
                         stopwatch.Elapsed,
-                        async: false);
+                        async: false,
+                        logErrorAsDebug: logErrorAsDebug);
 
                     throw;
                 }
@@ -333,11 +335,12 @@ namespace Microsoft.EntityFrameworkCore.Storage
         /// <param name="cancellationToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
+        /// <param name="logErrorAsDebug"> Indicate if the connection error should be logged as debug message. </param>
         /// <returns>
         ///     A task that represents the asynchronous operation, with a value of true if the connection
         ///     was actually opened.
         /// </returns>
-        public virtual async Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public virtual async Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken), bool logErrorAsDebug = false)
         {
             CheckForAmbientTransactions();
 
@@ -377,7 +380,8 @@ namespace Microsoft.EntityFrameworkCore.Storage
                         e,
                         startTime,
                         stopwatch.Elapsed,
-                        async: true);
+                        async: true,
+                        logErrorAsDebug: logErrorAsDebug);
 
                     throw;
                 }
@@ -439,7 +443,8 @@ namespace Microsoft.EntityFrameworkCore.Storage
                             e,
                             startTime,
                             stopwatch.Elapsed,
-                            async: false);
+                            async: false,
+                            logErrorAsDebug: false);
 
                         throw;
                     }

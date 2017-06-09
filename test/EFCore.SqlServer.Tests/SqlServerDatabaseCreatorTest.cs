@@ -169,7 +169,7 @@ namespace Microsoft.EntityFrameworkCore
             public int FailDelay { get; set; }
             public int OpenCount { get; set; }
 
-            public override bool Open()
+            public override bool Open(bool logErrorAsDebug = false)
             {
                 if (++OpenCount < FailureCount)
                 {
@@ -180,7 +180,7 @@ namespace Microsoft.EntityFrameworkCore
                 return true;
             }
 
-            public override async Task<bool> OpenAsync(CancellationToken cancellationToken = new CancellationToken())
+            public override async Task<bool> OpenAsync(CancellationToken cancellationToken = new CancellationToken(), bool logErrorAsDebug = false)
             {
                 if (++OpenCount < FailureCount)
                 {

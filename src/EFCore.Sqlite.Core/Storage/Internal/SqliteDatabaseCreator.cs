@@ -49,7 +49,7 @@ namespace Microsoft.EntityFrameworkCore.Storage.Internal
             {
                 try
                 {
-                    readOnlyConnection.Open();
+                    readOnlyConnection.Open(logErrorAsDebug: true);
                 }
                 catch (SqliteException ex) when (ex.SqliteErrorCode == SQLITE_CANTOPEN)
                 {

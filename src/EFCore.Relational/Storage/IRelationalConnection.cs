@@ -44,8 +44,9 @@ namespace Microsoft.EntityFrameworkCore.Storage
         /// <summary>
         ///     Opens the connection to the database.
         /// </summary>
+        /// <param name="logErrorAsDebug"> Indicate if the connection error should be logged as debug message. </param>
         /// <returns> True if the underlying connection was actually opened; false otherwise. </returns>
-        bool Open();
+        bool Open(bool logErrorAsDebug = false);
 
         /// <summary>
         ///     Asynchronously opens the connection to the database.
@@ -53,11 +54,12 @@ namespace Microsoft.EntityFrameworkCore.Storage
         /// <param name="cancellationToken">
         ///     A <see cref="CancellationToken" /> to observe while waiting for the task to complete.
         /// </param>
+        /// <param name="logErrorAsDebug"> Indicate if the connection error should be logged as debug message. </param>
         /// <returns>
         ///     A task that represents the asynchronous operation, with a value of true if the connection
         ///     was actually opened.
         /// </returns>
-        Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<bool> OpenAsync(CancellationToken cancellationToken = default(CancellationToken), bool logErrorAsDebug = false);
 
         /// <summary>
         ///     Closes the connection to the database.

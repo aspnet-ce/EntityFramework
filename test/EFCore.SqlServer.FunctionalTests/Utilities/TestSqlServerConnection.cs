@@ -55,18 +55,18 @@ namespace Microsoft.EntityFrameworkCore.Utilities
 
         public virtual bool IsMultipleActiveResultSetsEnabled => _realConnection.IsMultipleActiveResultSetsEnabled;
 
-        public virtual bool Open()
+        public virtual bool Open(bool logErrorAsDebug = false)
         {
             PreOpen();
 
-            return _realConnection.Open();
+            return _realConnection.Open(logErrorAsDebug);
         }
 
-        public virtual Task<bool> OpenAsync(CancellationToken cancellationToken = new CancellationToken())
+        public virtual Task<bool> OpenAsync(CancellationToken cancellationToken = new CancellationToken(), bool logErrorAsDebug = false)
         {
             PreOpen();
 
-            return _realConnection.OpenAsync(cancellationToken);
+            return _realConnection.OpenAsync(cancellationToken, logErrorAsDebug);
         }
 
         private void PreOpen()

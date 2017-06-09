@@ -178,12 +178,24 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
                     arguments.Add(cancellationTokenExpression);
                 }
 
-                return Expression.Call(
-                    Expression.Property(
-                        EntityQueryModelVisitor.QueryContextParameter,
-                        nameof(QueryContext.QueryBuffer)),
-                    includeCollectionMethodInfo,
-                    arguments);
+                var includeCollectionMethodCall =
+                    Expression.Call(
+                        Expression.Property(
+                            EntityQueryModelVisitor.QueryContextParameter,
+                            nameof(QueryContext.QueryBuffer)),
+                        includeCollectionMethodInfo,
+                        arguments);
+
+                return
+                    navigation.DeclaringType is EntityType entityType
+                        && entityType.BaseType == null
+                    ? (Expression)includeCollectionMethodCall
+                    : Expression.Condition(
+                        Expression.TypeIs(
+                            targetEntityExpression,
+                            navigation.DeclaringType.ClrType),
+                        includeCollectionMethodCall,
+                        Expression.Default(includeCollectionMethodInfo.ReturnType));
             }
 
             private Expression CompileReferenceInclude(
@@ -196,6 +208,7 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
                 ref int collectionIncludeId,
                 Expression lastPropertyExpression)
             {
+                // TODO: introduce null conditional here instead of hard cast - otherwise derived navigation include breaks for InMemory 
                 propertyExpressions.Add(
                     lastPropertyExpression
                         = lastPropertyExpression.CreateEFPropertyExpression(Navigation));
@@ -292,13 +305,27 @@ namespace Microsoft.EntityFrameworkCore.Query.Internal
 
                 var blockType = blockExpressions.Last().Type;
 
+                Expression conditionTest
+                    = Expression.Not(
+                        Expression.Call(
+                            _referenceEqualsMethodInfo,
+                            relatedArrayAccessExpression,
+                            Expression.Constant(null, typeof(object))));
+
+                if (!(Navigation.DeclaringType is EntityType entityType)
+                    || entityType.BaseType != null)
+                {
+                    conditionTest
+                        = Expression.AndAlso(
+                            conditionTest,
+                            Expression.TypeIs(
+                                targetEntityExpression,
+                                Navigation.DeclaringType.ClrType));
+                }
+
                 return
                     Expression.Condition(
-                        Expression.Not(
-                            Expression.Call(
-                                _referenceEqualsMethodInfo,
-                                relatedArrayAccessExpression,
-                                Expression.Constant(null, typeof(object)))),
+                        conditionTest,
                         Expression.Block(
                             blockType,
                             blockExpressions),
